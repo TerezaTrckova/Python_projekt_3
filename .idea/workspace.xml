@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8fee19b5-221d-4e33-a79a-270d6190ac43" name="Changes" comment=" ,">
-      <change beforePath="$PROJECT_DIR$/.idea/PythonProject_3.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PythonProject_3.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/election_scraper.py" beforeDir="false" afterPath="$PROJECT_DIR$/election_scraper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +26,7 @@
   "keyToString": {
     "Python.election_scraper.executor": "Run",
     "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/terda/PycharmProjects/PythonProject/zkouska",
     "node.js.selected.package.tslint": "(autodetect)",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
@@ -50,7 +48,15 @@
       <option name="project" value="LOCAL" />
       <updated>1734034113603</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary=" ,">
+      <option name="closed" value="true" />
+      <created>1734035828914</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1734035828914</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
