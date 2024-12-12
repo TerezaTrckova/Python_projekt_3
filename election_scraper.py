@@ -104,7 +104,7 @@ def main():
     parser.add_argument("output_file", help="Název výstupního CSV souboru")
     args = parser.parse_args()
 
-    # Kontrola, zda argumenty jsou zadány
+    # Kontrola, zda jsou zadány argumenty
     if not args.uzemi_url or not args.output_file:
         parser.error("Je nutné zadat oba argumenty: URL a název výstupního souboru.")
 
