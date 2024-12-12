@@ -5,7 +5,7 @@ email: terda.trckova@seznam.cz
 discord: tereza_trckova
 """
 
-import argparse
+from argparse import ArgumentParser
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -99,7 +99,7 @@ def get_obec_results(obec_url):
     }
 
 def main():
-    parser = argparse.ArgumentParser(description="Scraper volebních výsledků 2017")
+    parser = ArgumentParser(description="Scraper volebních výsledků 2017")
     parser.add_argument("uzemi_url", help="URL územního celku ke scrapování (např. https://...)")
     parser.add_argument("output_file", help="Název výstupního CSV souboru")
     args = parser.parse_args()
