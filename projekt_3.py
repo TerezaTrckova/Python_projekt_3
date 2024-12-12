@@ -1,8 +1,8 @@
 """
-projekt_3.py: třetí projekt do Engeto Online Python Akademie
+projekt_3.py: Třetí projekt do Engeto Online Python Akademie
 author: Tereza Trčková
-email: petr.svetr@gmail.com
-discord: Petr Svetr#4490
+email: terda.trckova@seznam.cz
+discord: tereza_trckova
 """
 
 import argparse
@@ -13,51 +13,84 @@ import pandas as pd
 BASE_URL = "https://www.volby.cz/pls/ps2017nss/"
 
 def get_obec_links(uzemi_url):
-    """Získá odkazy na jednotlivé obce z daného územního celku."""
+    """Získá odkazy na jednotlivé obce ze všech tabulek na dané stránce."""
     response = requests.get(uzemi_url)
-    soup = BeautifulSoup(response.content, 'html.parser')
+    if response.status_code != 200:
+        raise ValueError(f"Chyba při načítání stránky: {uzemi_url}. Status kód: {response.status_code}")
 
-    table = soup.find("table", {"class": "table"})
-    rows = table.find_all("tr")[2:]  # Vynecháme hlavičku tabulky
+    soup = BeautifulSoup(response.content, 'html.parser')
+    tables = soup.find_all("table", {"class": "table"})
+    if not tables:
+        raise ValueError("Stránka neobsahuje žádné tabulky. URL: " + uzemi_url)
 
     obce_links = []
-    for row in rows:
-        cols = row.find_all("td")
-        if len(cols) > 0:
-            obec_name = cols[1].text.strip()
-            link = cols[-1].find("a")['href']  # Sloupec s odkazem "Výběr obce"
-            full_link = BASE_URL + link
-            obce_links.append((obec_name, full_link))
+    for table in tables:
+        rows = table.find_all("tr")[2:]  # Vynechání hlavičky tabulky
+        for row in rows:
+            cols = row.find_all("td")
+            if len(cols) > 0:
+                obec_name = cols[1].text.strip()
+                link_tag = cols[0].find("a")
+                if link_tag:
+                    link = link_tag["href"]
+                    full_link = BASE_URL + link
+                    obce_links.append((obec_name, full_link))
+
     return obce_links
 
 def get_obec_results(obec_url):
     """Stáhne a vyparsuje volební výsledky pro konkrétní obec."""
     response = requests.get(obec_url)
+    if response.status_code != 200:
+        raise ValueError(f"Chyba při načítání stránky: {obec_url}. Status kód: {response.status_code}")
+
     soup = BeautifulSoup(response.content, 'html.parser')
 
-    # Získáme základní informace o obci
-    kod_obce = soup.find("h3").text.split()[0]  # První číslo v názvu obce
-    nazev_obce = " ".join(soup.find("h3").text.split()[1:])  # Zbytek názvu
+    # Získání kódu obce z URL
+    code_param = obec_url.split("xobec=")[1].split("&")[0]
 
-    # Získáme tabulku s hlavními čísly
-    table = soup.find("table", {"id": "ps311_t1"})
-    rows = table.find_all("tr")
+    # Získání názvu obce
+    kod_obce_h3 = soup.find("h3")
+    if kod_obce_h3 is None:
+        raise ValueError(f"Stránka neobsahuje nadpis s kódem obce. URL: {obec_url}")
+    nazev_obce = " ".join(kod_obce_h3.text.split()[1:])
 
-    volici_v_seznamu = int(rows[0].find_all("td")[1].text.replace('\xa0', '').replace(' ', ''))
-    vydane_obalky = int(rows[1].find_all("td")[1].text.replace('\xa0', '').replace(' ', ''))
-    platne_hlasy = int(rows[2].find_all("td")[1].text.replace('\xa0', '').replace(' ', ''))
+    # Získání údajů z hlavní tabulky
+    main_table = soup.find("table", {"id": "ps311_t1"})
+    if main_table is None:
+        raise ValueError(f"Stránka neobsahuje hlavní tabulku. URL: {obec_url}")
 
-    # Získáme hlasy pro jednotlivé strany
-    strany_table = soup.find("table", {"id": "ps311_t2"})
+    main_rows = main_table.find_all("tr")
+    if len(main_rows) < 2:
+        raise ValueError(f"Hlavní tabulka neobsahuje dostatek řádků. URL: {obec_url}")
+
+    main_data_row = main_rows[2].find_all("td")
+    if len(main_data_row) < 8:
+        raise ValueError(f"Hlavní tabulka neobsahuje očekávaný počet datových sloupců. URL: {obec_url}")
+
+    # Funkce pro bezpečné převedení hodnoty na číslo
+    def safe_int(value):
+        return int(value.replace('\xa0', '').replace(' ', '')) if value.strip() != '-' else 0
+
+    volici_v_seznamu = safe_int(main_data_row[3].text)
+    vydane_obalky = safe_int(main_data_row[4].text)
+    platne_hlasy = safe_int(main_data_row[7].text)
+
+    # Získání údajů z obou tabulek politických stran
+    tables = soup.find_all("table", {"class": "table"})[1:]
     strany = {}
-    for row in strany_table.find_all("tr")[2:]:
-        cols = row.find_all("td")
-        nazev_strany = cols[1].text.strip()
-        hlasy = int(cols[2].text.replace('\xa0', '').replace(' ', ''))
-        strany[nazev_strany] = hlasy
+    for table in tables:
+        for row in table.find_all("tr")[2:]:
+            cols = row.find_all("td")
+            if len(cols) < 3:
+                continue
+            nazev_strany = cols[1].text.strip()
+            hlasy = safe_int(cols[2].text)
+            strany[nazev_strany] = hlasy
 
+    # Vrácení dat jako slovníku
     return {
-        "code": kod_obce,
+        "code": code_param,
         "location": nazev_obce,
         "registered": volici_v_seznamu,
         "envelopes": vydane_obalky,
@@ -73,20 +106,27 @@ def main():
 
     try:
         obce_links = get_obec_links(args.uzemi_url)
-        print(f"Získávám výsledky pro {len(obce_links)} obcí...")
+        print(f"Stahuji data z vybraného URL: {args.uzemi_url}")
+        print(f"To znamená celkem {len(obce_links)} obcí ke zpracování")
 
         data = []
         for obec_name, obec_url in obce_links:
-            print(f"Stahuji data pro obec: {obec_name}")
-            data.append(get_obec_results(obec_url))
+            obec_data = get_obec_results(obec_url)
+            obec_data["location"] = obec_name
+            data.append(obec_data)
 
-        # Uložení do CSV
+        # Uložení dat do CSV
         df = pd.DataFrame(data)
-        df.to_csv(args.output_file, index=False, encoding='utf-8')
-        print(f"Výsledky uloženy do {args.output_file}")
+        df.to_csv(args.output_file, index=False, encoding='utf-8-sig', sep=',')
+        print(f"Ukládám do souboru: {args.output_file}")
+        print("Ukončuji election-scraper")
 
     except Exception as e:
         print(f"Chyba: {e}")
 
 if __name__ == "__main__":
     main()
+
+
+
+
