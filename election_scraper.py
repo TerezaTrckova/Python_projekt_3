@@ -25,7 +25,7 @@ def get_obec_links(uzemi_url):
 
     obce_links = []
     for table in tables:
-        rows = table.find_all("tr")[2:]  # Vynechání hlavičky tabulky
+        rows = table.find_all("tr")[2:]
         for row in rows:
             cols = row.find_all("td")
             if len(cols) > 0:
