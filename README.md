@@ -1,6 +1,6 @@
 # Python projekt 3 - Engeto akademie
 ## Popis projektu
-Tento projekt obsahuje scraper výsledků parlamentních voleb z roku 2017 v ČR. Program získává výsledky voleb z webu [volby.cz](https://www.volby.cz/pls/ps2017nss/).
+Tento projekt obsahuje scraper výsledků parlamentních voleb z roku 2017 v ČR. Program získává výsledky voleb z webu [volby.cz](https://www.volby.cz/pls/ps2017nss/ps3?xjazyk=CZ).
 
 ## Instalace knihoven
 Nejprve je potřeba instalovat knihovny použité ve skriptu. Potřebné knihovny jsou uloženy v textovém souboru ```requirements.txt```. Pro instalaci knihoven je vhodné použít nové virtuální prostředí a takto spustiti kód:
