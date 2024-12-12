@@ -100,9 +100,17 @@ def get_obec_results(obec_url):
 
 def main():
     parser = argparse.ArgumentParser(description="Scraper volebních výsledků 2017")
-    parser.add_argument("uzemi_url", help="URL územního celku ke scrapování")
+    parser.add_argument("uzemi_url", help="URL územního celku ke scrapování (např. https://...)")
     parser.add_argument("output_file", help="Název výstupního CSV souboru")
     args = parser.parse_args()
+
+    # Kontrola, zda argumenty jsou zadány
+    if not args.uzemi_url or not args.output_file:
+        parser.error("Je nutné zadat oba argumenty: URL a název výstupního souboru.")
+
+    # Kontrola URL
+    if not (args.uzemi_url.startswith("http://") or args.uzemi_url.startswith("https://")):
+        parser.error("Argument uzemi_url musí být platné URL začínající na 'http://' nebo 'https://'.")
 
     try:
         obce_links = get_obec_links(args.uzemi_url)
@@ -115,7 +123,7 @@ def main():
             obec_data["location"] = obec_name
             data.append(obec_data)
 
-        # Uložení dat do CSV
+        # Uložení do CSV
         df = pd.DataFrame(data)
         df.to_csv(args.output_file, index=False, encoding='utf-8-sig', sep=',')
         print(f"Ukládám do souboru: {args.output_file}")
