@@ -13,7 +13,7 @@ pip install -r requirements.txt
 Ke spuštění souboru ```election_scraper.py``` jsou potřeba 2 argumenty. První argument obsahuje odkaz na územní celek, který chcete scrapovat. Druhý argument obsahuje jméno výstupního souboru.
 ```
 
-python election_scraper.py "<URL-uzemi><vysledny-soubor>
+python election_scraper.py "<uzemi-URL><vysledny-soubor>
 
 ```
 ## Ukázka programu
