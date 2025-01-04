@@ -29,10 +29,10 @@ python election_scraper.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xk
 #### Průběh stahování
 ```
 
-Stahuji data z vybraného URL: https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2105
-To znamená celkem 88 obcí ke zpracování
-Ukládám do souboru: vysledky_okresu_Kutna_Hora.csv
-Ukončuji election-scraper
+Fetching data from the specified URL: https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2105
+There are 88 locations to process
+Results saved to file: vysledky_okresu_Kutna_Hora.csv
+
 
 ```
 #### Ukázka výsledku
